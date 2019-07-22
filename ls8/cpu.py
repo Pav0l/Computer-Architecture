@@ -86,6 +86,9 @@ class CPU:
                 self.pc += 2
             elif IR == 0b00000001:
                 running = False
+            elif IR == 0b10100010:
+                self.alu("MUL", operand_a, operand_b)
+                self.pc += 3
             else:
                 print(f"Invalid instruction {IR}")
                 sys.exit(1)
