@@ -70,4 +70,22 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        pass
+        running = True
+
+        while running:
+            IR = self.ram_read(self.pc)
+            operand_a = self.ram_read(self.pc + 1)
+            operand_b = self.ram_read(self.pc + 2)
+
+            # SWITCH
+            if IR == 130:
+                self.reg[operand_a] = operand_b
+                self.pc += 3
+            elif IR == 71:
+                print(self.reg[operand_a])
+                self.pc += 2
+            elif IR == 1:
+                running = False
+            else:
+                print(f"Invalid instruction {IR}")
+                sys.exit(1)
