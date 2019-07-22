@@ -37,7 +37,8 @@ class CPU:
 
         if op == "ADD":
             self.reg[reg_a] += self.reg[reg_b]
-        # elif op == "SUB": etc
+        elif op == "MUL":
+            self.reg[reg_a] *= self.reg[reg_b]
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -77,13 +78,13 @@ class CPU:
             operand_b = self.ram_read(self.pc + 2)
 
             # SWITCH
-            if IR == 130:
+            if IR == 0b10000010:
                 self.reg[operand_a] = operand_b
                 self.pc += 3
-            elif IR == 71:
+            elif IR == 0b01000111:
                 print(self.reg[operand_a])
                 self.pc += 2
-            elif IR == 1:
+            elif IR == 0b00000001:
                 running = False
             else:
                 print(f"Invalid instruction {IR}")
