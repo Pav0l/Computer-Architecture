@@ -11,26 +11,45 @@ class CPU:
         self.ram = [0] * 256
         self.reg = [0] * 8
         self.pc = 0
+        self.branchtable = {}
+        # fill out branchtable
+        self.operations()
 
-    def load(self):
+    def LDI(self, op_a, op_b):
+        self.reg[op_a] = op_b
+        self.pc += 3
+
+    def PRN(self, op_a, op_b):
+        print(self.reg[op_a])
+        self.pc += 2
+
+    def MUL(self, op_a, op_b):
+        self.alu("MUL", op_a, op_b)
+        self.pc += 3
+
+    def operations(self):
+        self.branchtable[0b10000010] = self.LDI
+        self.branchtable[0b01000111] = self.PRN
+        self.branchtable[0b10100010] = self.MUL
+
+    def load(self, file):
         """Load a program into memory."""
 
         address = 0
+        program = []
 
-        # For now, we've just hardcoded a program:
-
-        program = [
-            # From print8.ls8
-            0b10000010,  # LDI R0,8
-            0b00000000,
-            0b00001000,
-            0b01000111,  # PRN R0
-            0b00000000,
-            0b00000001,  # HLT
-        ]
+        with open(file) as f:
+            for line in f:
+                # remove comments
+                line = line.partition('#')[0]
+                # remove trailing spaces
+                line = line.rstrip()
+                if len(line) > 0:
+                    # make bin string into integer
+                    program.append(int(line, 2))
 
         for instruction in program:
-            self.ram[address] = instruction
+            self.ram_write(address, instruction)
             address += 1
 
     def alu(self, op, reg_a, reg_b):
@@ -38,7 +57,8 @@ class CPU:
 
         if op == "ADD":
             self.reg[reg_a] += self.reg[reg_b]
-        # elif op == "SUB": etc
+        elif op == "MUL":
+            self.reg[reg_a] *= self.reg[reg_b]
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -77,15 +97,10 @@ class CPU:
             operand_a = self.ram_read(self.pc + 1)
             operand_b = self.ram_read(self.pc + 2)
 
-            # SWITCH
-            if IR == 130:
-                self.reg[operand_a] = operand_b
-                self.pc += 3
-            elif IR == 71:
-                print(self.reg[operand_a])
-                self.pc += 2
-            elif IR == 1:
+            if IR == 0b00000001:
                 running = False
-            else:
+            elif IR not in self.branchtable:
                 print(f"Invalid instruction {IR}")
                 sys.exit(1)
+            else:
+                self.branchtable[IR](operand_a, operand_b)
