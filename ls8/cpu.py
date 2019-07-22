@@ -11,6 +11,26 @@ class CPU:
         self.ram = [0] * 256
         self.reg = [0] * 8
         self.pc = 0
+        self.branchtable = {}
+        # fill out branchtable
+        self.operations()
+
+    def LDI(self, op_a, op_b):
+        self.reg[op_a] = op_b
+        self.pc += 3
+
+    def PRN(self, op_a, op_b):
+        print(self.reg[op_a])
+        self.pc += 2
+
+    def MUL(self, op_a, op_b):
+        self.alu("MUL", op_a, op_b)
+        self.pc += 3
+
+    def operations(self):
+        self.branchtable[0b10000010] = self.LDI
+        self.branchtable[0b01000111] = self.PRN
+        self.branchtable[0b10100010] = self.MUL
 
     def load(self, file):
         """Load a program into memory."""
@@ -77,18 +97,10 @@ class CPU:
             operand_a = self.ram_read(self.pc + 1)
             operand_b = self.ram_read(self.pc + 2)
 
-            # SWITCH
-            if IR == 0b10000010:
-                self.reg[operand_a] = operand_b
-                self.pc += 3
-            elif IR == 0b01000111:
-                print(self.reg[operand_a])
-                self.pc += 2
-            elif IR == 0b00000001:
+            if IR == 0b00000001:
                 running = False
-            elif IR == 0b10100010:
-                self.alu("MUL", operand_a, operand_b)
-                self.pc += 3
-            else:
+            elif IR not in self.branchtable:
                 print(f"Invalid instruction {IR}")
                 sys.exit(1)
+            else:
+                self.branchtable[IR](operand_a, operand_b)
