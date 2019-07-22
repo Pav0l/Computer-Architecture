@@ -29,7 +29,7 @@ class CPU:
                     program.append(int(line, 2))
 
         for instruction in program:
-            self.ram[address] = instruction
+            self.ram_write(address, instruction)
             address += 1
 
     def alu(self, op, reg_a, reg_b):
