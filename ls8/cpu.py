@@ -29,10 +29,16 @@ class CPU:
         self.alu("MUL", op_a, op_b)
         self.pc += 3
 
+    def POP(self, register):
+        stack_value = self.ram[self.stack_pointer]
+        self.reg[register] = stack_value
+        self.stack_pointer -= 1
+
     def operations(self):
         self.branchtable[0b10000010] = self.LDI
         self.branchtable[0b01000111] = self.PRN
         self.branchtable[0b10100010] = self.MUL
+        self.branchtable[0b01000110] = self.POP
 
     def load(self, file):
         """Load a program into memory."""
