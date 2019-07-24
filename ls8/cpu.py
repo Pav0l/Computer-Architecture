@@ -13,30 +13,58 @@ class CPU:
         self.pc = 0
         self.branchtable = {}
         # fill out branchtable
-        self.operations()
+        self.initialize_branchtable()
+        # stack pointer default value
+        self.stack_pointer = 0xF3
 
+    # Add value op_b to register op_a
     def LDI(self, op_a, op_b):
         self.reg[op_a] = op_b
         self.pc += 3
 
+    # print value of register op_a
     def PRN(self, op_a, op_b):
         print(self.reg[op_a])
         self.pc += 2
 
+    # call MUL in ALU unit on op_a and op_b
     def MUL(self, op_a, op_b):
         self.alu("MUL", op_a, op_b)
         self.pc += 3
 
-    def operations(self):
+    # pop a value from the stack to a register
+    def POP(self, op_a, op_b):
+        stack_value = self.ram[self.stack_pointer]
+        self.reg[op_a] = stack_value
+        # if you are at the top of the stack with stack pointer
+        # do not increase pointer
+        if self.stack_pointer != 0xF3:
+            self.stack_pointer += 1
+        self.pc += 2
+
+    # push a value from a register op_a into the stack
+    def PUSH(self, op_a, op_b):
+        # decrease the stack pointer
+        self.stack_pointer -= 1
+        # get value from register op_a
+        value = self.reg[op_a]
+        # write value to the stack at stack pointer
+        self.ram_write(self.stack_pointer, value)
+        self.pc += 2
+
+    # fill out branchtable with available operations
+    def initialize_branchtable(self):
         self.branchtable[0b10000010] = self.LDI
         self.branchtable[0b01000111] = self.PRN
         self.branchtable[0b10100010] = self.MUL
+        self.branchtable[0b01000110] = self.POP
+        self.branchtable[0b01000101] = self.PUSH
 
+    # load asembly instructions from a file
     def load(self, file):
         """Load a program into memory."""
 
         address = 0
-        program = []
 
         with open(file) as f:
             for line in f:
@@ -46,12 +74,11 @@ class CPU:
                 line = line.rstrip()
                 if len(line) > 0:
                     # make bin string into integer
-                    program.append(int(line, 2))
+                    instruction = int(line, 2)
+                    self.ram_write(address, instruction)
+                    address += 1
 
-        for instruction in program:
-            self.ram_write(address, instruction)
-            address += 1
-
+    # arithmetic logic unit operations
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
 
