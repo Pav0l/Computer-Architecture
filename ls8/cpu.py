@@ -37,11 +37,18 @@ class CPU:
         if self.stack_pointer != 0xF3:
             self.stack_pointer += 1
 
+    def PUSH(self, value):
+        # write value to the stack at stack pointer
+        self.ram_write(self.stack_pointer, value)
+        # decrease the stack pointer
+        self.stack_pointer -= 1
+
     def operations(self):
         self.branchtable[0b10000010] = self.LDI
         self.branchtable[0b01000111] = self.PRN
         self.branchtable[0b10100010] = self.MUL
         self.branchtable[0b01000110] = self.POP
+        self.branchtable[0b01000101] = self.PUSH
 
     def load(self, file):
         """Load a program into memory."""
