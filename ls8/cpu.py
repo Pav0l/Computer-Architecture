@@ -29,19 +29,25 @@ class CPU:
         self.alu("MUL", op_a, op_b)
         self.pc += 3
 
-    def POP(self, register):
+    # pop a value from the stack to a register
+    def POP(self, op_a, op_b):
         stack_value = self.ram[self.stack_pointer]
-        self.reg[register] = stack_value
+        self.reg[op_a] = stack_value
         # if you are at the top of the stack with stack pointer
         # do not increase pointer
         if self.stack_pointer != 0xF3:
             self.stack_pointer += 1
+        self.pc += 2
 
-    def PUSH(self, value):
-        # write value to the stack at stack pointer
-        self.ram_write(self.stack_pointer, value)
+    # push a value from a register op_a into the stack
+    def PUSH(self, op_a, op_b):
         # decrease the stack pointer
         self.stack_pointer -= 1
+        # get value from register op_a
+        value = self.reg[op_a]
+        # write value to the stack at stack pointer
+        self.ram_write(self.stack_pointer, value)
+        self.pc += 2
 
     def operations(self):
         self.branchtable[0b10000010] = self.LDI
