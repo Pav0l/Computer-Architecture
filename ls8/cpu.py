@@ -14,6 +14,8 @@ class CPU:
         self.branchtable = {}
         # fill out branchtable
         self.operations()
+        # stack pointer default value
+        self.stack_pointer = self.ram[0xF3]
 
     def LDI(self, op_a, op_b):
         self.reg[op_a] = op_b
