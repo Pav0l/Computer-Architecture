@@ -65,6 +65,7 @@ class CPU:
         self.ram_write(self.stack_pointer, value)
         self.pc += 2
 
+    # Calls a subroutine (function) at the address stored in the register
     def CALL(self, op_a, op_b):
         # store return address (self.pc + 2) in stack (return address is the next instruction address)
         self.stack_pointer -= 1
@@ -74,11 +75,16 @@ class CPU:
         # then move the pc to the subroutine address
         self.pc = self.reg[op_a]
 
+    # Return from subroutine
     def RET(self, op_a, op_b):
         # pop return value from the stack and store it in self.pc
         stack_value = self.ram[self.stack_pointer]
         # so next cycle will go from there
         self.pc = stack_value
+
+    # Jump to the address stored in the given register op_a
+    def JMP(self, op_a, op_b):
+        self.pc = self.reg[op_a]
 
     # fill out branchtable with available operations
     def initialize_branchtable(self):
@@ -91,6 +97,7 @@ class CPU:
         self.branchtable[0b01010000] = self.CALL
         self.branchtable[0b00010001] = self.RET
         self.branchtable[0b10100111] = self.CMP
+        self.branchtable[0b01010100] = self.JMP
 
     # load asembly instructions from a file
     def load(self, file):
