@@ -32,6 +32,11 @@ class CPU:
         self.alu("MUL", op_a, op_b)
         self.pc += 3
 
+        # call MUL in ALU unit on op_a and op_b
+    def ADD(self, op_a, op_b):
+        self.alu("ADD", op_a, op_b)
+        self.pc += 3
+
     # pop a value from the stack to a register
     def POP(self, op_a, op_b):
         stack_value = self.ram[self.stack_pointer]
@@ -72,6 +77,7 @@ class CPU:
         self.branchtable[0b10000010] = self.LDI
         self.branchtable[0b01000111] = self.PRN
         self.branchtable[0b10100010] = self.MUL
+        self.branchtable[0b10100000] = self.ADD
         self.branchtable[0b01000110] = self.POP
         self.branchtable[0b01000101] = self.PUSH
         self.branchtable[0b01010000] = self.CALL
