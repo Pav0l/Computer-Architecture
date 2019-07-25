@@ -52,6 +52,17 @@ class CPU:
         self.ram_write(self.stack_pointer, value)
         self.pc += 2
 
+    def CALL(self, register):
+        pass
+        # store return address (self.pc + 1) in stack
+
+        # then move the pc to the subroutine address
+
+    def RET(self):
+        pass
+        # pop return value from the stack and store it in self.pc
+        # so next cycle will go from there
+
     # fill out branchtable with available operations
     def initialize_branchtable(self):
         self.branchtable[0b10000010] = self.LDI
@@ -59,6 +70,8 @@ class CPU:
         self.branchtable[0b10100010] = self.MUL
         self.branchtable[0b01000110] = self.POP
         self.branchtable[0b01000101] = self.PUSH
+        self.branchtable[0b01010000] = self.CALL
+        self.branchtable[0b00010001] = self.RET
 
     # load asembly instructions from a file
     def load(self, file):
@@ -127,7 +140,7 @@ class CPU:
             if IR == 0b00000001:
                 running = False
             elif IR not in self.branchtable:
-                print(f"Invalid instruction {IR}")
+                print(f"Invalid instruction {IR} ({bin(IR)})")
                 sys.exit(1)
             else:
                 self.branchtable[IR](operand_a, operand_b)
