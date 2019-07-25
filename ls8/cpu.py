@@ -35,9 +35,14 @@ class CPU:
         self.alu("MUL", op_a, op_b)
         self.pc += 3
 
-        # call MUL in ALU unit on op_a and op_b
+    # call ADD in ALU unit on op_a and op_b
     def ADD(self, op_a, op_b):
         self.alu("ADD", op_a, op_b)
+        self.pc += 3
+
+    # call CMP in ALU unit on op_a and op_b
+    def CMP(self, op_a, op_b):
+        self.alu("CMP", op_a, op_b)
         self.pc += 3
 
     # pop a value from the stack to a register
