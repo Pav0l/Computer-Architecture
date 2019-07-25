@@ -90,6 +90,7 @@ class CPU:
         self.branchtable[0b01000101] = self.PUSH
         self.branchtable[0b01010000] = self.CALL
         self.branchtable[0b00010001] = self.RET
+        self.branchtable[0b10100111] = self.CMP
 
     # load asembly instructions from a file
     def load(self, file):
