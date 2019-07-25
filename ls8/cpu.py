@@ -32,6 +32,11 @@ class CPU:
         self.alu("MUL", op_a, op_b)
         self.pc += 3
 
+        # call MUL in ALU unit on op_a and op_b
+    def ADD(self, op_a, op_b):
+        self.alu("ADD", op_a, op_b)
+        self.pc += 3
+
     # pop a value from the stack to a register
     def POP(self, op_a, op_b):
         stack_value = self.ram[self.stack_pointer]
@@ -52,13 +57,31 @@ class CPU:
         self.ram_write(self.stack_pointer, value)
         self.pc += 2
 
+    def CALL(self, op_a, op_b):
+        # store return address (self.pc + 2) in stack (return address is the next instruction address)
+        self.stack_pointer -= 1
+        return_address = self.pc + 2
+        self.ram_write(self.stack_pointer, return_address)
+
+        # then move the pc to the subroutine address
+        self.pc = self.reg[op_a]
+
+    def RET(self, op_a, op_b):
+        # pop return value from the stack and store it in self.pc
+        stack_value = self.ram[self.stack_pointer]
+        # so next cycle will go from there
+        self.pc = stack_value
+
     # fill out branchtable with available operations
     def initialize_branchtable(self):
         self.branchtable[0b10000010] = self.LDI
         self.branchtable[0b01000111] = self.PRN
         self.branchtable[0b10100010] = self.MUL
+        self.branchtable[0b10100000] = self.ADD
         self.branchtable[0b01000110] = self.POP
         self.branchtable[0b01000101] = self.PUSH
+        self.branchtable[0b01010000] = self.CALL
+        self.branchtable[0b00010001] = self.RET
 
     # load asembly instructions from a file
     def load(self, file):
@@ -127,7 +150,7 @@ class CPU:
             if IR == 0b00000001:
                 running = False
             elif IR not in self.branchtable:
-                print(f"Invalid instruction {IR}")
+                print(f"Invalid instruction {IR} ({bin(IR)})")
                 sys.exit(1)
             else:
                 self.branchtable[IR](operand_a, operand_b)
