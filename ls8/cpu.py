@@ -16,6 +16,9 @@ class CPU:
         self.initialize_branchtable()
         # stack pointer default value
         self.stack_pointer = 0xF3
+        # internal flags register 0b00000LGE
+        # L = less then; G = greater than; E = equal
+        self.flags = 0b00000000
 
     # Add value op_b to register op_a
     def LDI(self, op_a, op_b):
