@@ -37,9 +37,41 @@ class CPU:
         self.alu("CMP", op_a, op_b)
         self.pc += 3
 
-    # # call AND in ALU unit on op_a and op_b
+    # call AND in ALU unit on op_a and op_b
     def AND(self, op_a, op_b):
         self.alu("AND", op_a, op_b)
+        self.pc += 3
+
+    def OR(self, op_a, op_b):
+        self.alu("OR", op_a, op_b)
+        self.pc += 3
+
+    # If the value in the second register is 0, the system should print an error message and halt
+    def MOD(self, op_a, op_b):
+        # run a CMP to compare op_b == 0
+        self.CMP(0, op_b)
+        # if E flag == 1  => print an error and HLT, else call ALU
+        if self.flags == 0b00000001:
+            print("ERROR! Can not MOD by 0")
+            sys.exit(1)
+        else:
+            self.alu("MOD", op_a, op_b)
+            self.pc += 3
+
+    def XOR(self, op_a, op_b):
+        self.alu("XOR", op_a, op_b)
+        self.pc += 3
+
+    def NOT(self, op_a, op_b):
+        self.alu("NOT", op_a, op_b)
+        self.pc += 3
+
+    def SHL(self, op_a, op_b):
+        self.alu("SHL", op_a, op_b)
+        self.pc += 3
+
+    def SHR(self, op_a, op_b):
+        self.alu("SHR", op_a, op_b)
         self.pc += 3
 
     """ END ALU function calls"""
@@ -116,6 +148,12 @@ class CPU:
         self.branchtable[0b10100010] = self.MUL
         self.branchtable[0b10100000] = self.ADD
         self.branchtable[0b10101000] = self.AND
+        self.branchtable[0b10101010] = self.OR
+        self.branchtable[0b10101011] = self.XOR
+        self.branchtable[0b01101001] = self.NOT
+        self.branchtable[0b10100100] = self.MOD
+        self.branchtable[0b10101100] = self.SHL
+        self.branchtable[0b10101101] = self.SHR
         self.branchtable[0b01000110] = self.POP
         self.branchtable[0b01000101] = self.PUSH
         self.branchtable[0b01010000] = self.CALL
@@ -161,6 +199,24 @@ class CPU:
         # Bitwise-AND the values in registerA and registerB, then store the result in registerA
         elif op == "AND":
             self.reg[reg_a] = self.reg[reg_a] & self.reg[reg_b]
+        # Perform a bitwise-OR between the values in registerA and registerB, storing the result in registerA
+        elif op == "OR":
+            self.reg[reg_a] = self.reg[reg_a] | self.reg[reg_b]
+        # Perform a bitwise-XOR between the values in registerA and registerB, storing the result in registerA
+        elif op == "XOR":
+            self.reg[reg_a] = self.reg[reg_a] ^ self.reg[reg_b]
+        # Perform a bitwise-NOT on the value in a register
+        elif op == "NOT":
+            self.reg[reg_a] = ~self.reg[reg_a]
+        # Shift the value in registerA left by the number of bits specified in registerB, filling the low bits with 0
+        elif op == "SHL":
+            self.reg[reg_a] = self.reg[reg_a] >> self.reg[reg_b]
+        # Shift the value in registerA right by the number of bits specified in registerB, filling the high bits with 0
+        elif op == "SHR":
+            self.reg[reg_a] = self.reg[reg_a] << self.reg[reg_b]
+        # Divide the value in the first register by the value in the second, storing the remainder of the result in registerA
+        elif op == "MOD":
+            self.reg[reg_a] = self.reg[reg_a] % self.reg[reg_b]
         else:
             raise Exception("Unsupported ALU operation")
 
