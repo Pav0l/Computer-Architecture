@@ -86,6 +86,11 @@ class CPU:
     def JMP(self, op_a, op_b):
         self.pc = self.reg[op_a]
 
+    # If equal flag is set (true), jump to the address stored in the given register
+    def JEQ(self, op_a, op_b):
+        if self.flags == 0b00000001:
+            self.pc = self.reg[op_a]
+
     # fill out branchtable with available operations
     def initialize_branchtable(self):
         self.branchtable[0b10000010] = self.LDI
@@ -98,6 +103,7 @@ class CPU:
         self.branchtable[0b00010001] = self.RET
         self.branchtable[0b10100111] = self.CMP
         self.branchtable[0b01010100] = self.JMP
+        self.branchtable[0b01010101] = self.JEQ
 
     # load asembly instructions from a file
     def load(self, file):
