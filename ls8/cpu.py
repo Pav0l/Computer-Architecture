@@ -20,15 +20,7 @@ class CPU:
         # L = less then; G = greater than; E = equal
         self.flags = 0b00000000
 
-    # Add value op_b to register op_a
-    def LDI(self, op_a, op_b):
-        self.reg[op_a] = op_b
-        self.pc += 3
-
-    # print value of register op_a
-    def PRN(self, op_a, op_b):
-        print(self.reg[op_a])
-        self.pc += 2
+    """ START ALU function calls"""
 
     # call MUL in ALU unit on op_a and op_b
     def MUL(self, op_a, op_b):
@@ -44,6 +36,23 @@ class CPU:
     def CMP(self, op_a, op_b):
         self.alu("CMP", op_a, op_b)
         self.pc += 3
+
+    # # call AND in ALU unit on op_a and op_b
+    def AND(self, op_a, op_b):
+        self.alu("AND", op_a, op_b)
+        self.pc += 3
+
+    """ END ALU function calls"""
+
+    # Add value op_b to register op_a
+    def LDI(self, op_a, op_b):
+        self.reg[op_a] = op_b
+        self.pc += 3
+
+    # print value of register op_a
+    def PRN(self, op_a, op_b):
+        print(self.reg[op_a])
+        self.pc += 2
 
     # pop a value from the stack to a register
     def POP(self, op_a, op_b):
@@ -106,6 +115,7 @@ class CPU:
         self.branchtable[0b01000111] = self.PRN
         self.branchtable[0b10100010] = self.MUL
         self.branchtable[0b10100000] = self.ADD
+        self.branchtable[0b10101000] = self.AND
         self.branchtable[0b01000110] = self.POP
         self.branchtable[0b01000101] = self.PUSH
         self.branchtable[0b01010000] = self.CALL
@@ -148,6 +158,9 @@ class CPU:
                 self.flags = 0b00000100
             else:
                 self.flags = 0b00000001
+        # Bitwise-AND the values in registerA and registerB, then store the result in registerA
+        elif op == "AND":
+            self.reg[reg_a] = self.reg[reg_a] & self.reg[reg_b]
         else:
             raise Exception("Unsupported ALU operation")
 
