@@ -53,15 +53,19 @@ class CPU:
         self.pc += 2
 
     def CALL(self, register):
-        pass
-        # store return address (self.pc + 1) in stack
+        # store return address (self.pc + 2) in stack (return address is the next instruction address)
+        self.stack_pointer -= 1
+        return_address = self.pc + 2
+        self.ram_write(self.stack_pointer, return_address)
 
         # then move the pc to the subroutine address
+        self.pc = self.reg[register]
 
     def RET(self):
-        pass
         # pop return value from the stack and store it in self.pc
+        stack_value = self.ram[self.stack_pointer]
         # so next cycle will go from there
+        self.pc = stack_value
 
     # fill out branchtable with available operations
     def initialize_branchtable(self):
