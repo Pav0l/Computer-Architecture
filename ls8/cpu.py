@@ -50,6 +50,8 @@ class CPU:
     def MOD(self, op_a, op_b):
         # run a CMP to compare op_b == 0
         self.CMP(0, op_b)
+        # get back to previous RAM pc (idx) before CMP
+        self.pc -= 3
         # if E flag == 1  => print an error and HLT, else call ALU
         if self.flags == 0b00000001:
             print("ERROR! Can not MOD by 0")
@@ -64,7 +66,7 @@ class CPU:
 
     def NOT(self, op_a, op_b):
         self.alu("NOT", op_a, op_b)
-        self.pc += 3
+        self.pc += 2
 
     def SHL(self, op_a, op_b):
         self.alu("SHL", op_a, op_b)
