@@ -2,7 +2,7 @@
 
 ## Project
 
-* [Implement the LS-8 Emulator](ls8/)
+- [Implement the LS-8 Emulator](ls8/)
 
 ## Task List: add this to the first comment of your Pull Request
 
@@ -37,3 +37,59 @@
 - [ ] Add the timer interrupt to the LS-8 emulator
 - [ ] Add the keyboard interrupt to the LS-8 emulator
 - [ ] Write an LS-8 assembly program to draw a curved histogram on the screen
+
+### Day 5 - Sprint Challenge: Conditional Jumps
+
+Your finished project must include all of the following requirements:
+
+- [ ] Add the `CMP` instruction and `equal` flag to your LS-8.
+
+- [ ] Add the `JMP` instruction.
+
+- [ ] Add the `JEQ` and `JNE` instructions.
+
+[See the LS-8 spec for details](https://github.com/LambdaSchool/Computer-Architecture/blob/master/LS8-spec.md)
+
+In your solution, it is essential that you follow best practices and produce
+clean and professional results. Schedule time to review, refine, and assess your
+work and perform basic professional polishing including spell-checking and
+grammar-checking on your work. It is better to submit a challenge that meets MVP
+than one that attempts too much and does not.
+
+Validate your work through testing and ensure that your code operates as designed.
+
+[Here is some code](sctest.ls8) that exercises the above instructions. It should
+print:
+
+```
+1
+4
+5
+```
+
+## Sprint Challenge - Stretch Problems
+
+After finishing your required elements, you can push your work further. These
+goals may or may not be things you have learned in this module but they build on
+the material you just studied. Time allowing, stretch your limits and see if you
+can deliver on the following optional goals:
+
+- [ ] Add the ALU operations: `AND` `OR` `XOR` `NOT` `SHL` `SHR` `MOD`
+- [ ] Add an `ADDI` extension instruction to add an immediate value to a register
+- [ ] Add timer interrupts
+- [ ] Add keyboard interrupts
+
+To test the ALU operations I've created new asembly instructions in
+
+[here](https://github.com/Pav0l/Computer-Architecture/blob/master/ls8/examples/alu.ls8) that exercises the all ALU instructions. It should
+print:
+
+```
+2
+30
+28
+-11
+2
+40
+1
+```
